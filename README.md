@@ -70,6 +70,8 @@ The GDDA manages the DCIP and provides full technical and customer support inclu
 * Reporting key statistics to issuers
 * Managing the commercial agreement with the platform vendor to ensure delivery of agreed service levels
 
+See our [DCIP Support Guide](/DCIP%20Support%20Guide.md) for details of Service Levels and support processes.
+
 ## Links
 [Digital Public Infrastructure](https://github.com/NZ-Digital-Public-Infrastructure/.github/blob/main/profile/README.md)
 
