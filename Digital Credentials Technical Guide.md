@@ -4,7 +4,22 @@ This page describes technical details and configuration requirements for issuing
 ## Background
 The DCIP is hosted on the [MATTR VII](https://learn.mattr.global/docs/issuance) platform. The platform provides a portal for users with administrator access to set up tenant and credential configuration details. An API provides full credential management functionality for the issuing agency to access from their system of record.
 
-For technical implementation detail and more general background on digital credentials and the OpenID4VCI standard, refer to [MATTR Learn](For technical implementation detail and more general background on digital credentials and the OpenID4VCI standard, refer to MATTR Learn). 
+For technical implementation detail and more general background on digital credentials and the OpenID4VCI standard, refer to [MATTR Learn](https://learn.mattr.global/docs/issuance). 
+
+This page provides the implementation requirements for New Zealand Government agencies using the DCIP:
+
+* [DCIP Tenant Configurations](#dcip-tenant-configurations)
+  * [Custom Domain](#custom-domain)
+  * [Document Signer Certificates & Status List Signer Certificates ](#document-signer-certificates--status-list-signer-certificates)
+  * [Certificate and credential validity periods](#certificate-and-credential-validity-periods)
+* [Credential Requirements](#credential-requirements)
+  * [Format](#format)
+  * [Claims Persistence](#claims-persistence)
+* [Managing Digital Credentials](#managing-digital-credentials)
+  * [API](#api)
+  * [Webhooks](#webhooks)
+  * [Status Lists](#status-lists)
+  * [Issuing into the Govt.nz App Wallet](#issuing-into-the-govtnz-app-wallet)
 
 ## DCIP Tenant Configurations
 ### Custom Domain
@@ -18,7 +33,7 @@ The preferred convention is an issuance subdomain under the agency's domain. The
 
     issuance.agency.govt.nz → agency-tenant.vii.nz01.mattr.global 
 
-This domain must be set up prior to the creation of the production certificate for the tenant.
+This domain must be set up prior to the creation of the production certificate for the tenant. 
 
 Note that this domain is used for the public credential status list and is embedded in every credential at issuance, so cannot be changed without reissuing credentials. 
 
@@ -30,7 +45,7 @@ On the DCIP, certificates for production tenants are manually managed. The IACA 
 
 **How this works in practice**
 
-Sandbox test tenant certificates are automatically managed by the DPI platform. Production tenants follows a CSR-based flow: 
+Sandbox test tenant certificates are automatically managed by the DCIP. Production tenants follows a CSR-based flow: 
 * DPI registers the IACA (root CA) with the MATTR VII tenant in PEM format 
 * MATTR VII generates a private key internally (stored in its KMS) and produces a Certificate Signing Request (CSR)
 * DPI uses the offline HSM to sign the CSR against the IACA private key, producing the DSC or SLSC 
@@ -41,7 +56,8 @@ DPI is responsible for the full lifecycle of the IACA and signer certificates, i
  
 ### Certificate and credential validity periods 
 
-**Credentials issued through the DCIP have a maximum validity period of one year.**
+> [!NOTE]
+> **Credentials issued through the DCIP have a maximum validity period of one year.**
  
 To ensure that all active issued credentials are associated with an active certificate, the following periods are used by the DPI team. 
 
@@ -56,6 +72,20 @@ DPI manages certificate renewal internally along with MATTR, with sufficient lea
 ## Credential Requirements
 Refer to [MATTR Learn - credential configuration](https://learn.mattr.global/docs/issuance/credential-configuration/overview) and [MATTR Learn - structure to function](https://learn.mattr.global/docs/concepts/mdocs/structure-to-function) for details of how to set up credential configurations in the DCIP.
 
+### Issuance Workflows
+The DCIP supports the two distinct issuance workflows described in the [OpenID4VCI standard]((https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html)). Agencies may choose to use either or both of these methods, depending on the requirements of their service and users:
+
+**Authorisation Code flow:** The user initiates the flow from the [Govt.nz app wallet](https://github.com/NZ-Digital-Public-Infrastructure/govt-nz-app-wallet) begin an authentication process with the issuing agency. After the user successfully completes authentication and identification processes, the issuer's authentication provider returns an authorisation code. The wallet then exchanges this code for an access token, which is used to obtain the credential.
+
+Refer to [MATTR Authorization Code flow](https://learn.mattr.global/docs/issuance/authorization-code/overview) for implementation details.
+
+**Pre-authorised Code flow:** The issuing agency completes authentication and identification of the user before providing a credential offer. The offer could be in the form of a QR code to be scanned by the user's wallet or a link that opens the offer in the user's wallet. The user does not need to authenticate again and the wallet presents the pre-authorised code to retrieve an access token and then claim the credential. 
+
+Refer to [MATTR Pre-authorized Code flow](https://learn.mattr.global/docs/issuance/pre-authorized-code/overview) for implementation details.
+
+> [!IMPORTANT]
+> For additional security when generating a Pre-Authorised Code flow QR code, the issuer must separately share a six-digit [transaction code](https://learn.mattr.global/docs/issuance/pre-authorized-code/journey-pattern#transaction-code) with the user. This code is generated by the DCIP when the `transactionCodeConfiguration` parameter is used in the credential offer API call. The user will be prompted to enter the code in their wallet to claim the credential.
+
 ### Format
 Credentials issued through the DCIP must be in mdoc format, based on the ISO/IEC 18013-5 and ISO/IEC 23220 standards. 
 
@@ -68,7 +98,8 @@ Custom namespaces can be added for agency-specific claims. Namespace design must
 ### Claims Persistence
 MATTR VII provides a `claimsToPersist` configuration option that allows claim data to be stored against a user object in the MATTR VII database, making it available for future credential issuance operations. 
 
-**Agencies must not use claimsToPersist.**
+> [!IMPORTANT]
+> **Agencies must not use `claimsToPersist`.**
 
 This is a firm requirement under the DCIP Privacy Impact Assessment (PIA) and credential accreditation obligations. Persisting credential subject data within the MATTR VII tenant creates unnecessary data residency and privacy risk that is inconsistent with these obligations. **By default, no claims are persisted, and this must be maintained.**
 
@@ -86,14 +117,15 @@ The DCIP supports credential revocation via publicly hosted status lists. MATTR 
 
 Status lists use a 1-bit format per the current [Token Status List specification (Draft 14)](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-14), where each issued credential occupies a single bit: 0 for valid, 1 for invalid. Each list can hold the status of up to 500,000 individual credentials. The DCIP manages the creation of additional lists when required. 
 
-Revocation is required for all credentials issued through the DPI platform, mandated by FA5.01 of the New Zealand Identification Standards, which requires that credential subject information can be updated. 
+> [!IMPORTANT]
+> There must be a means to revoke credentials issued through the DCIP, mandated by Rule 83 of the [DISTF rules](https://www.publicservice.govt.nz/about-the-commission/government-digital-delivery-agency/trust-framework-for-digital-identity/about-digital-identity-services/trust-framework-legislation/trust-framework-rules).
 
 To revoke a credential, the `credentialId` generated at issuance is required. The recommended approach for capturing this is to configure a MATTR VII webhook that notifies the agency's backend when a credential is issued. Refer to the [revocation](https://learn.mattr.global/docs/issuance/revocation/overview) section of the MATTR documentation for full details.
 
 ### Issuing into the Govt.nz App Wallet
 When generating a credential offer, the API will return the offer URI using the `openid-credential-offer://` scheme for maximum interoperability. The URI will allow the credential to be issued into any OpenID4VCI wallet.
 
-To issue specifically into the Govt.nz app wallet, this URI must be transformed before being provided to the recipient.
+To issue specifically into the [Govt.nz app wallet](https://github.com/NZ-Digital-Public-Infrastructure/govt-nz-app-wallet), this URI must be transformed before being provided to the recipient.
 
 **Sandbox**  
 
@@ -106,3 +138,15 @@ Replace `openid-credential-offer://` with `https://m.app.govt.nz/openid-credenti
 For example, a credential offer would look like: 
 
     https://sandbox.m.app.govt.nz/openid-credential-offer?credential_offer=%7B%22credential_issuer… 
+
+## References
+[Digital Credential Concepts](https://learn.mattr.global/docs/concepts)
+
+[MATTR VII Issuance](https://learn.mattr.global/docs/issuance)
+
+[MATTR VII API](https://learn.mattr.global/docs/api-reference)
+
+[Open ID for Verifiable Credential Issuance (OpenID4VCI)](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html)
+
+[Digital Identity Services Trust Framework Rules](https://www.publicservice.govt.nz/about-the-commission/government-digital-delivery-agency/trust-framework-for-digital-identity/about-digital-identity-services/trust-framework-legislation/trust-framework-rules)
+
