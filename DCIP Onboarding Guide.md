@@ -1,5 +1,7 @@
 # Onboarding to the Digital Credential Issuance Platform
-This page describes the process for New Zealand government agencies to start using the [Digital Credential Issuance Platform (DCIP)](/README.md).
+This page describes the process for New Zealand government agencies to start using the [Digital Credential Issuance Platform (DCIP)](/README.md). A high-level description of the work that an agency must do to develop a digital credential can be viewed in the [Credentials to Production](/assets/Credentials%20to%20production.png) diagram.
+
+The flow chart and details below describe the process of engaging with the DPI team to use the DCIP. 
 
 ![Flow chart of the agency onboarding process](/assets/Agency%20onboarding%20process.png "Agency onboarding process")
 ### Onboarding agreements
