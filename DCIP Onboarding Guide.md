@@ -1,6 +1,7 @@
 # Onboarding to the Digital Credential Issuance Platform
 This page describes the process for New Zealand government agencies to start using the [Digital Credential Issuance Platform (DCIP)](/README.md).
 
+![Flow chart of the agency onboarding process](/assets/Agency%20onboarding%20process.png "Agency onboarding process")
 ### Onboarding agreements
 * When an agency intends to start developing a digital credential they contact the Digital Public Infrastructure (DPI) team at [issuance@gdda.govt.nz](mailto:issuance@gdda.govt.nz) to discuss the credential and delivery timelines.
 * When the agency is ready to start development and testing they supply a [DPI Sandbox Access Form](https://github.com/NZ-Digital-Public-Infrastructure/.github/blob/main/profile/sandbox/DPI%20Sandbox%20Access%20Form%202026-04-15.pdf) signed by the business owner, who should hold a General Manager or equivalent-level role.
