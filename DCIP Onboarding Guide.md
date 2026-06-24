@@ -5,7 +5,10 @@ The flow chart and details below describe the process of engaging with the DPI t
 
 ![Flow chart of the agency onboarding process](/assets/Agency%20onboarding%20process.png "Agency onboarding process")
 ### Onboarding agreements
+_Step 1_
 * When an agency intends to start developing a digital credential they contact the Digital Public Infrastructure (DPI) team at [issuance@gdda.govt.nz](mailto:issuance@gdda.govt.nz) to discuss the credential and delivery timelines.
+
+_Steps 2 and 3_
 * When the agency is ready to start development and testing they supply a [DPI Sandbox Access Form](https://github.com/NZ-Digital-Public-Infrastructure/.github/blob/main/profile/sandbox/DPI%20Sandbox%20Access%20Form%202026-04-15.pdf) signed by the business owner, who should hold a General Manager or equivalent-level role.
 * The DPI Sandbox Access Form provides details including:
   * Team members that should have access to the DCIP tenancy, and sandbox versions of the Govt.nz app and NZ Verify app.
@@ -16,13 +19,19 @@ The flow chart and details below describe the process of engaging with the DPI t
 It is expected that the agency will be preparing their [Digital Identify Services Trust Framework (DISTF) accreditation application](https://www.publicservice.govt.nz/about-the-commission/government-digital-delivery-agency/trust-framework-for-digital-identity/information-for-providers)  for the credential in parallel with the technical development, including appointment of an [independent evaluator](https://www.publicservice.govt.nz/about-the-commission/government-digital-delivery-agency/trust-framework-for-digital-identity/information-for-providers/independent-evaluators) to review the areas of security, privacy, and identification management. 
 
 ### Technical setup
+
+_Steps 4-6_
 * The DPI team initiate a DCIP sandbox tenant with admininstrator access for selected agency technical team members.
 * The sandbox tenancy uses automatically managed certificates.
 * The sandbox tenancy can issue credentials into the sandbox version of the Govt.nz app wallet.
 * If the credential is intended to be verifiable by the NZ Verify app in in-person situations, a verification template will be defined and loaded into the sandbox NZ Verify app to enable end-to-end testing.
+
+_Steps 7-8_
 * Once development and testing is completed and accreditation has been gained, or is in an advanced state in the application process, the production tenant will be created by the DPI team.
-* Administrator access for the same agency users will be temporarily granted to allow the configuration to be set up, including creation of the API access credentials. 
+* Administrator access to production will be temporarily granted to the sandbox agency users to allow the configuration to be set up, including creation of the API access credentials. 
 * The DPI team will validate the tenant configuration, then will remove the agency administrator access.
+
+_Step 9_
 * Production tenants use manually managed certificates, created in a secure offline Hardware Security Module (HSM) during Public Key Infrastructure (PKI) ceremonies.
 * The DPI team will arrange the PKI ceremony and load the resulting certificates into the production tenant.
 * The agency will be charged the production tenant onboarding fee.
