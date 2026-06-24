@@ -39,8 +39,8 @@ See our [DCIP Onboarding Guide](/DCIP%20Onboarding%20Guide.md) for full details 
 
 Contact the DPI team at [issuance@gdda.govt.nz](mailto:issuance@gdda.govt.nz) to begin the onboarding process.
 
-### Development
-The agency business system that is responsible for mastering the credential data and verifying the identity of the credential recipient communicates with the DCIP tenant via an API for all aspects of credential management. 
+### Integration to the DCIP
+The issuing agency is responsible for building or enhancing their business system that will integrate with the DCIP. That business sytem is the master source for data that is held in the credentials, and is responsible for verifying the identity of the credential recipient. The business system communicates with the DCIP tenant via an API for all aspects of credential management. 
 
 See our [Digital Credentials Technical Guide](/Digital%20Credentials%20Technical%20Guide.md) for details of how to use the DCIP to issue and manage credentials.
 
